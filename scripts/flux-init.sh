@@ -55,17 +55,18 @@ helmOperator:
         username: ""
 EOF
 
-helm repo add weaveworks https://weaveworks.github.io/flux
+helm repo add fluxcd https://fluxcd.github.io/flux
 
 echo ">>> Installing Flux for ${REPO_URL}"
 helm upgrade -i flux --wait \
 --set git.url=${REPO_URL} \
 --set git.branch=${REPO_BRANCH} \
 --set git.pollInterval=1m \
+--set additionalArgs={"--connect=ws://fluxcloud.flux"} \
 --set registry.pollInterval=1m \
 --namespace flux \
 -f ${TEMP}/flux-values.yaml \
-weaveworks/flux
+fluxcd/flux
 
 kubectl -n flux rollout status deployment/flux
 
